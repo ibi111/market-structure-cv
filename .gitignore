@@ -219,7 +219,21 @@ __marimo__/
 
 
 # market-structure-cv
-data
+
 .idea
+# Data
+data/
 
+# Model weights
+models/*
+*.pt
 
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Python
+
+*.pyc
+
+.venv/
+runs/*
