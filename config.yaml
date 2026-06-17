@@ -1,0 +1,21 @@
+model:
+  path: "models/fvg_detector-4/weights/best.pt"
+  conf_threshold: 0.25
+
+region:
+  left: 70
+  top: 310
+  width: 1673
+  height: 615
+
+inference:
+  trigger_key: "f2"
+  quit_key: "f3"
+  scroll_delay: 2.0  # seconds after scroll to update
+
+display:
+  show_labels: true
+
+colors:
+  bullish_fvg: "#00FF00"
+  bearish_fvg: "#FF0000"
