@@ -2,16 +2,24 @@ model:
   path: "models/fvg_detector-4/weights/best.pt"
   conf_threshold: 0.25
 
+## laptop
 region:
   left: 70
   top: 310
   width: 1673
   height: 615
 
+# 4k left monitor
+#region:
+#  left: -2811
+#  top: 318
+#  width: 2658
+#  height: 1112
+
 inference:
   trigger_key: "f2"
   quit_key: "f3"
-  scroll_delay: 2.0  # seconds after scroll to update
+  auto_refresh_interval: 10
 
 display:
   show_labels: true

@@ -4,34 +4,31 @@ import mss
 import tkinter as tk
 import threading
 import keyboard
-import yaml
 from ultralytics import YOLO
 from pathlib import Path
-
-
-def load_config() -> dict:
-    config_path = Path(__file__).parent.parent / 'config.yaml'
-    with open(config_path, 'r') as f:
-        return yaml.safe_load(f)
 
 
 class FVGOverlay:
     def __init__(self, config: dict):
         self.config = config
         self.running = True
+        self._auto_timer = None
 
         # Load model
         model_path = Path(__file__).parent.parent / config['model']['path']
         self.model = YOLO(str(model_path))
         self.conf_threshold = config['model']['conf_threshold']
 
-        # Region and colors
+        # Region, colors, display
         self.region = config['region']
         self.colors = config['colors']
         self.trigger_key = config['inference']['trigger_key']
+        self.quit_key = config['inference']['quit_key']
+        self.auto_refresh_interval = config['inference']['auto_refresh_interval']
+        self.show_labels = config['display']['show_labels']
 
         self._setup_window()
-        self._setup_hotkey()
+        self._setup_hotkeys()
 
     def _setup_window(self):
         self.root = tk.Tk()
@@ -58,36 +55,48 @@ class FVGOverlay:
 
         self.status_label = tk.Label(
             self.root,
-            text=f"Press '{self.trigger_key.upper()}' to detect | ESC to quit",
+            text=f"{self.trigger_key.upper()}: detect | {self.quit_key.upper()}: quit | Auto: {self.auto_refresh_interval}s",
             bg='black', fg='white',
             font=('Arial', 10)
         )
         self.status_label.place(x=10, y=10)
-        self.root.bind('<Escape>', lambda e: self.on_close())
 
-    def _setup_hotkey(self):
+    def _setup_hotkeys(self):
         keyboard.add_hotkey(self.trigger_key, self.on_trigger)
+        keyboard.add_hotkey(self.quit_key, self.on_close)
+
+    def _schedule_auto_refresh(self):
+        """Schedule next auto refresh"""
+        self._auto_timer = threading.Timer(
+            self.auto_refresh_interval, self._auto_refresh
+        )
+        self._auto_timer.start()
+
+    def _auto_refresh(self):
+        """Called automatically every N seconds"""
+        if self.running:
+            threading.Thread(target=self.capture_and_infer, daemon=True).start()
+            self._schedule_auto_refresh()
 
     def on_trigger(self):
-        """Called when user presses trigger hotkey"""
+        """Called on manual hotkey press — also resets auto timer"""
+        if self._auto_timer is not None:
+            self._auto_timer.cancel()
         threading.Thread(target=self.capture_and_infer, daemon=True).start()
+        self._schedule_auto_refresh()
 
     def capture_and_infer(self):
-        # Update status
         self.canvas.after(0, lambda: self.status_label.config(
             text='Detecting...', fg='yellow'
         ))
 
         with mss.MSS() as sct:
-            # Capture screen region
             screenshot = sct.grab(self.region)
             frame = np.array(screenshot)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
 
-        # Run inference
         results = self.model(frame, conf=self.conf_threshold, verbose=False)[0]
 
-        # Collect box data
         box_data = []
         detection_count = {'bullish_fvg': 0, 'bearish_fvg': 0}
 
@@ -99,12 +108,10 @@ class FVGOverlay:
             detection_count[cls_name] = detection_count.get(cls_name, 0) + 1
             box_data.append((x1, y1, x2, y2, cls_name, conf))
 
-        # Update canvas
         self.canvas.after(0, self.update_canvas, box_data, detection_count)
 
-        # Restore status
         self.canvas.after(0, lambda: self.status_label.config(
-            text=f"Press '{self.trigger_key.upper()}' to detect | ESC to quit",
+            text=f"{self.trigger_key.upper()}: detect | {self.quit_key.upper()}: quit | Auto: {self.auto_refresh_interval}s",
             fg='white'
         ))
 
@@ -114,20 +121,19 @@ class FVGOverlay:
         for (x1, y1, x2, y2, cls_name, conf) in boxes:
             color = self.colors.get(cls_name, '#FFFFFF')
 
-            # Box outline only — background stays transparent
             self.canvas.create_rectangle(
                 x1, y1, x2, y2,
                 outline=color, width=2, fill=''
             )
-            # Label with background for readability
-            self.canvas.create_text(
-                x1, y1 - 8,
-                text=f"{cls_name} {conf:.2f}",
-                fill=color, anchor='w',
-                font=('Arial', 9, 'bold')
-            )
 
-        # Detection summary top right
+            if self.show_labels:
+                self.canvas.create_text(
+                    x1, y1 - 8,
+                    text=f"{cls_name} {conf:.2f}",
+                    fill=color, anchor='w',
+                    font=('Arial', 9, 'bold')
+                )
+
         bull = detection_count.get('bullish_fvg', 0)
         bear = detection_count.get('bearish_fvg', 0)
         self.canvas.create_text(
@@ -139,14 +145,13 @@ class FVGOverlay:
 
     def on_close(self):
         self.running = False
+        if self._auto_timer is not None:
+            self._auto_timer.cancel()
         keyboard.unhook_all()
         self.root.destroy()
 
     def run(self):
+        # Start auto refresh loop
+        self._schedule_auto_refresh()
         self.root.mainloop()
 
-
-if __name__ == '__main__':
-    config = load_config()
-    app = FVGOverlay(config)
-    app.run()
