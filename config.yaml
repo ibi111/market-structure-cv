@@ -27,3 +27,8 @@ display:
 colors:
   bullish_fvg: "#00FF00"
   bearish_fvg: "#FF0000"
+
+api:
+  cors_origins:
+    - "http://localhost:3000"
+  disable_docs: true
