@@ -1,0 +1,31 @@
+# Data
+data/
+
+# Model weights — mounted as volume
+models/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/
+
+# Environment
+.env
+
+# Git
+.git/
+.gitignore
+
+# Inference — not needed in container
+inference/
+
+# Misc
+*.md
+*.png
+*.jpg
