@@ -171,9 +171,6 @@ API available at `http://localhost:8000`
 - **Total instances:** ~2,400+ annotated FVGs
 - **Split:** 70% train / 15% val / 15% test
 - **Annotation tool:** Roboflow
-
-📦 [Download dataset on Kaggle](https://www.kaggle.com/datasets/ibtsamsadiq/nq-fvg-dataset)
-
 ---
 
 ## Training
@@ -202,9 +199,9 @@ model.train(
 
 | Resource | Link |
 |----------|------|
-| 🤗 Model on HuggingFace | [ibtsamsadiq/nq-fvg-detector](https://huggingface.co/ibtsamsadiq/nq-fvg-detector) |
+| 🤗 Model on HuggingFace | [ibtsamsadiq/nq-fvg-detector](https://huggingface.co/ibtsam/nq-fvg-detector) |
 | 📦 Dataset on Kaggle | [ibtsamsadiq/nq-fvg-dataset](https://www.kaggle.com/datasets/ibtsamsadiq/nq-fvg-dataset) |
-| 🎯 Live Demo | [HuggingFace Spaces](https://huggingface.co/spaces/ibtsamsadiq/nq-fvg-detector) |
+| Live Demo | [HuggingFace Spaces](https://huggingface.co/spaces/ibtsam/nq-fvg-detector) |
 
 ---
 
@@ -228,7 +225,6 @@ This project uses [AGPL-3.0](LICENSE) in compliance with Ultralytics YOLO licens
 **Ibtsam Sadiq**: AI/ML Engineer
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-ibtsamsadiq01-blue)](https://www.linkedin.com/in/ibtsamsadiq01)
-[![GitHub](https://img.shields.io/badge/GitHub-ibtsamsadiq-black)](https://github.com/ibtsamsadiq)
-[![HuggingFace](https://img.shields.io/badge/🤗-ibtsamsadiq-yellow)](https://huggingface.co/ibtsamsadiq)
+[![HuggingFace](https://img.shields.io/badge/🤗-ibtsamsadiq-yellow)](https://huggingface.co/ibtsam)
 
 > **Disclaimer:** This project is for research and educational purposes only. Not financial advice.
