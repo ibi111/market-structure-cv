@@ -6,7 +6,7 @@ from fastapi.requests import Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from schemas import (
+from api.schemas import (
     PredictionResponse,
     Detection,
     BoundingBox,
@@ -31,7 +31,7 @@ def info():
 
 @router.get("/health", response_model=HealthResponse)
 def health():
-    from main import model
+    from api.main import model
     return HealthResponse(
         status="ok",
         model_loaded=model is not None
@@ -41,7 +41,7 @@ def health():
 @router.post("/predict", response_model=PredictionResponse)
 @limiter.limit("60/minute")
 async def predict(request: Request, file: UploadFile = File(...)):
-    from main import model, config
+    from api.main import model, config
 
     # Validate file type
     if file.content_type not in ("image/png", "image/jpeg", "image/jpg"):

@@ -52,5 +52,5 @@ app.add_middleware(
 )
 
 # Include routes
-from routes import router
+from api.routes import router
 app.include_router(router)
