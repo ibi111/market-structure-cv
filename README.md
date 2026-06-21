@@ -75,7 +75,7 @@ Four models were trained and compared:
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/ibtsamsadiq/market-structure-cv.git
+git clone https://github.com/ibi111/market-structure-cv.git
 cd market-structure-cv
 ```
 
@@ -85,7 +85,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. Download model weights
-Download `best.pt` from [HuggingFace](https://huggingface.co/ibtsamsadiq/nq-fvg-detector) and place it in:
+Download `best.pt` from [HuggingFace](https://huggingface.co/ibtsam/nq-fvg-detector) and place it in:
 ```
 models/fvg_detector/weights/best.pt
 ```
@@ -173,27 +173,6 @@ API available at `http://localhost:8000`
 - **Annotation tool:** Roboflow
 ---
 
-## Training
-
-Full training pipeline in `notebooks/train.ipynb`.
-
-```python
-from ultralytics import YOLO
-
-model = YOLO("yolo26m.pt")
-
-model.train(
-    data="data/dataset/nq-fvg-dataset/data.yaml",
-    epochs=100,
-    imgsz=640,
-    batch=16,
-    patience=20,
-    optimizer="auto",
-    pretrained=True,
-)
-```
-
----
 
 ## Links
 
